@@ -1,22 +1,39 @@
 using System;
+using System.Diagnostics;
 
 namespace Lab4 {
 
   class Program {
 
     public static void Main() {
-      char[] numbers = { '1', '2', '3', '4', '5', '6', '7', '8' };
-      char[] letters = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H' };
-
-      System.Console.WriteLine("Выберите первую шахматную фигуру (конь(1), слон(2), ладья(3), ферзь(4))");
-      int firstFigure = Convert.ToInt32(Console.ReadLine());
-      System.Console.WriteLine("Выберите вторую шахматную фигуру (конь(1), слон(2), ладья(3), ферзь(4))");
-      int secondFigure = Convert.ToInt32(Console.ReadLine());
-
+      char[] numbers = ['1', '2', '3', '4', '5', '6', '7', '8'];
+      char[] letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      char[] figures = ['1', '2', '3', '4'];
+      System.Console.WriteLine("Выберите первую шахматную фигуру (Ввести нужно только цифру: конь(1), слон(2), ладья(3), ферзь(4))");
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+      char? firstFigure1 = Console.ReadLine()[0];
+      System.Console.WriteLine("Выберите вторую шахматную фигуру (Ввести нужно только цифру: конь(1), слон(2), ладья(3), ферзь(4))");
+      char secondFigure1 = Console.ReadLine()[0];
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+      
+        if(!Array.Exists(figures, element => element == firstFigure1) || !Array.Exists(figures, element => element == secondFigure1)) {
+          System.Console.WriteLine("Вы неправильно ввели фигуры.");
+          return;
+        }
+      int firstFigure =  Convert.ToInt32(firstFigure1);
+      int secondFigure =  Convert.ToInt32(firstFigure1);
       System.Console.WriteLine("Введите первое шахматное поле: ");
       string first = "" + Console.ReadLine();
       System.Console.WriteLine("Введите второе шахматное поле: ");
       string second = "" + Console.ReadLine();
+      if(!Array.Exists(letters, element => element == first[0]) || 
+      !Array.Exists(numbers, element => element == first[1])||
+      !Array.Exists(letters, element => element == second[0]) || 
+      !Array.Exists(numbers, element => element == second[1]) ||
+      first.Length != 2 || second.Length != 2) {
+          System.Console.WriteLine("Вы неправильно ввели поля.");
+          return;
+        }
 
       System.Console.WriteLine(Color(first));
       System.Console.WriteLine(Color(second));
@@ -30,10 +47,10 @@ namespace Lab4 {
     }
 
     public static string Color(string field) {
-      char[] evenNumbers = { '2', '4', '6', '8' };
-      char[] evenLetters = { 'B', 'D', 'F', 'H' };
-      char[] oddNumbers = { '1', '3', '5', '7' };
-      char[] oddLetters = { 'A', 'C', 'E', 'G' };
+      char[] evenNumbers = ['2', '4', '6', '8'];
+      char[] evenLetters = ['B', 'D', 'F', 'H'];
+      char[] oddNumbers = ['1', '3', '5', '7'];
+      char[] oddLetters = ['A', 'C', 'E', 'G'];
       char letterToFind = field[0];
       char numberToFind = field[1];
 
