@@ -51,7 +51,6 @@ namespace Lab4 {
       char l2 = field2[0];
       char n2 = field2[1];
 
-      // Конь
       if (figure1 == 1) {
         if ((Math.Abs(Array.IndexOf(numbers, n1) - Array.IndexOf(numbers, n2)) == 2 &&
             Math.Abs(Array.IndexOf(letters, l1) - Array.IndexOf(letters, l2)) == 1) ||
@@ -59,21 +58,15 @@ namespace Lab4 {
             Math.Abs(Array.IndexOf(letters, l1) - Array.IndexOf(letters, l2)) == 2)) {
           return true;
         }
-      }
-      // Слон
-      else if (figure1 == 2) {
+      } else if (figure1 == 2) {
         if (Math.Abs(Array.IndexOf(numbers, n1) - Array.IndexOf(numbers, n2)) == Math.Abs(Array.IndexOf(letters, l1) - Array.IndexOf(letters, l2))) {
           return true;
         }
-      }
-      // Ладья
-      else if (figure1 == 3) {
+      } else if (figure1 == 3) {
         if (l1 == l2 || n1 == n2) {
           return true;
         }
-      }
-      // Ферзь
-      else if (figure1 == 4) {
+      } else if (figure1 == 4) {
         if (Math.Abs(Array.IndexOf(numbers, n1) - Array.IndexOf(numbers, n2)) == Math.Abs(Array.IndexOf(letters, l1) - Array.IndexOf(letters, l2)) ||
             l1 == l2 || n1 == n2) {
           return true;
@@ -84,58 +77,96 @@ namespace Lab4 {
     }
 
     public static string FindThreatPosition(int figure, string field1, string field2, char[] numbers, char[] letters) {
-      char l2 = field2[0];
-      char n2 = field2[1];
+    char l1 = field1[0];
+    char n1 = field1[1];
+    char l2 = field2[0];
+    char n2 = field2[1];
 
-      // Для коня
-      if (figure == 1) {
+    int indexL1 = Array.IndexOf(letters, l1);
+    int indexN1 = Array.IndexOf(numbers, n1);
+    int indexL2 = Array.IndexOf(letters, l2);
+    int indexN2 = Array.IndexOf(numbers, n2);
+    
+    if (figure == 1) {
         int[] knightMovesX = { 2, 2, -2, -2, 1, 1, -1, -1 };
         int[] knightMovesY = { 1, -1, 1, -1, 2, -2, 2, -2 };
 
         for (int i = 0; i < knightMovesX.Length; i++) {
-          int newX = Array.IndexOf(letters, l2) + knightMovesX[i];
-          int newY = Array.IndexOf(numbers, n2) + knightMovesY[i];
+            int newX = indexL2 + knightMovesX[i];
+            int newY = indexN2 + knightMovesY[i];
 
-          if (newX >= 0 && newX < letters.Length && newY >= 0 && newY < numbers.Length) {
-            return letters[newX] + "" + numbers[newY];
-          }
+            if (newX >= 0 && newX < letters.Length && newY >= 0 && newY < numbers.Length) {
+                if ((Math.Abs(indexN1 - newY) == 2 && Math.Abs(indexL1 - newX) == 1) ||
+                    (Math.Abs(indexN1 - newY) == 1 && Math.Abs(indexL1 - newX) == 2)) {
+                    return letters[newX] + "" + numbers[newY];
+                }
+            }
         }
-      }
+    }
 
-      // Для слона
-      else if (figure == 2) {
-        for (int i = 1; i < 8; i++) {
-          if (Array.IndexOf(letters, l2) + i < letters.Length && Array.IndexOf(numbers, n2) + i < numbers.Length) {
-            return letters[Array.IndexOf(letters, l2) + i] + "" + numbers[Array.IndexOf(numbers, n2) + i];
-          }
-          if (Array.IndexOf(letters, l2) - i >= 0 && Array.IndexOf(numbers, n2) - i >= 0) {
-            return letters[Array.IndexOf(letters, l2) - i] + "" + numbers[Array.IndexOf(numbers, n2) - i];
-          }
-        }
-      }
-
-      // Для ладьи
-      else if (figure == 3) {
-        for (int i = 0; i < letters.Length; i++) {
-          if (i != Array.IndexOf(letters, l2)) {
-            return letters[i] + "" + n2;
-          }
-        }
+    if (figure == 3 || figure == 4) {
         for (int i = 0; i < numbers.Length; i++) {
-          if (i != Array.IndexOf(numbers, n2)) {
-            return l2 + "" + numbers[i];
-          }
+            if (i != indexN1) {
+                if (l1 == l2 || numbers[i] == n2) {
+                    return l1 + "" + numbers[i];
+                }
+            }
         }
-      }
 
-      // Для ферзя
-      else if (figure == 4) {
-        string diagonalMove = FindThreatPosition(2, field1, field2, numbers, letters); // как слон
-        string straightMove = FindThreatPosition(3, field1, field2, numbers, letters); // как ладья
-        return diagonalMove ?? straightMove;
-      }
+        for (int i = 0; i < letters.Length; i++) {
+            if (i != indexL1) {
+                if (letters[i] == l2 || n1 == n2) {
+                    return letters[i] + "" + n1;
+                }
+            }
+        }
+    }
 
-      return "Нет доступного поля для угрозы.";
+    if (figure == 2 || figure == 4) {
+        for (int i = 1; i < 8; i++) {
+            if (indexL1 + i < letters.Length && indexN1 + i < numbers.Length) {
+                char newLetter = letters[indexL1 + i];
+                char newNumber = numbers[indexN1 + i];
+                if (newLetter == l2 && newNumber == n2) return newLetter + "" + newNumber;
+                if (Math.Abs(Array.IndexOf(letters, newLetter) - indexL2) ==
+                    Math.Abs(Array.IndexOf(numbers, newNumber) - indexN2)) {
+                    return newLetter + "" + newNumber;
+                }
+            }
+
+            if (indexL1 - i >= 0 && indexN1 + i < numbers.Length) {
+                char newLetter = letters[indexL1 - i];
+                char newNumber = numbers[indexN1 + i];
+                if (newLetter == l2 && newNumber == n2) return newLetter + "" + newNumber;
+                if (Math.Abs(Array.IndexOf(letters, newLetter) - indexL2) ==
+                    Math.Abs(Array.IndexOf(numbers, newNumber) - indexN2)) {
+                    return newLetter + "" + newNumber;
+                }
+            }
+
+            if (indexL1 + i < letters.Length && indexN1 - i >= 0) {
+                char newLetter = letters[indexL1 + i];
+                char newNumber = numbers[indexN1 - i];
+                if (newLetter == l2 && newNumber == n2) return newLetter + "" + newNumber;
+                if (Math.Abs(Array.IndexOf(letters, newLetter) - indexL2) ==
+                    Math.Abs(Array.IndexOf(numbers, newNumber) - indexN2)) {
+                    return newLetter + "" + newNumber;
+                }
+            }
+
+            if (indexL1 - i >= 0 && indexN1 - i >= 0) {
+                char newLetter = letters[indexL1 - i];
+                char newNumber = numbers[indexN1 - i];
+                if (newLetter == l2 && newNumber == n2) return newLetter + "" + newNumber;
+                if (Math.Abs(Array.IndexOf(letters, newLetter) - indexL2) ==
+                    Math.Abs(Array.IndexOf(numbers, newNumber) - indexN2)) {
+                    return newLetter + "" + newNumber;
+                }
+            }
+        }
+    }
+
+    return "Нет доступного поля для угрозы.";
     }
   }
 }
